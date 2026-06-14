@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TradeShield Enterprise V6</title>
+  <link rel="stylesheet" href="/static/css/theme.css?v=6"/>
+  <link rel="stylesheet" href="/static/css/layout.css?v=6"/>
+  <link rel="stylesheet" href="/static/css/components.css?v=6"/>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">TS</div>
+      <div><b>TradeShield</b><span>V6 Enterprise Control Tower</span></div>
+    </div>
+    <div class="auth-card">
+      <h3>Demo Login</h3>
+      <div class="demo-grid">
+        <button data-demo="officer">Officer</button>
+        <button data-demo="manager">Risk Manager</button>
+        <button data-demo="sme">SME</button>
+        <button data-demo="admin">Admin</button>
+      </div>
+      <label>Email</label><input id="email" value="officer@tradeshield.ai" autocomplete="username"/>
+      <label>Password</label><input id="password" value="demo12345" type="password" autocomplete="current-password"/>
+      <button id="loginBtn" class="primary">Login</button>
+      <button id="logoutBtn" class="ghost">Logout</button>
+      <p id="loginStatus" class="small muted">Not logged in.</p>
+    </div>
+    <nav id="nav"></nav>
+    <div class="mini-user"><span id="currentUser">No user</span><b id="currentRole">No role</b></div>
+  </aside>
+  <main class="main">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">BOCHK Challenge 2026 • Bank-grade demo workflow</p>
+        <h1>Trade Finance Control Tower for SME Risk Passports</h1>
+        <p>V6 adds a portfolio stress desk, deterministic banker copilot, credit memo generator, evidence-bundle hash, authenticated downloads, and a cleaner judge demo path.</p>
+      </div>
+      <div class="hero-panel">
+        <b>Judge Demo Path</b>
+        <ol>
+          <li>One-click Officer login</li>
+          <li>Open Case Queue</li>
+          <li>Generate Risk Passport</li>
+          <li>Open Copilot Brief</li>
+          <li>Record decision + settlement gates</li>
+          <li>Show audit, model governance, exports</li>
+        </ol>
+      </div>
+    </section>
+    <section id="kpis" class="kpi-grid"></section>
+    <section id="content" class="content"></section>
+  </main>
+</div>
+<script src="/static/js/state.js?v=6"></script>
+<script src="/static/js/api.js?v=6"></script>
+<script src="/static/js/render.js?v=6"></script>
+<script src="/static/js/pages/dashboard.js?v=6"></script>
+<script src="/static/js/pages/cases.js?v=6"></script>
+<script src="/static/js/pages/portfolio.js?v=6"></script>
+<script src="/static/js/pages/passport.js?v=6"></script>
+<script src="/static/js/pages/copilot.js?v=6"></script>
+<script src="/static/js/pages/decision.js?v=6"></script>
+<script src="/static/js/pages/fraud.js?v=6"></script>
+<script src="/static/js/pages/audit.js?v=6"></script>
+<script src="/static/js/pages/admin.js?v=6"></script>
+<script src="/static/js/app.js?v=6"></script>
+</body>
+</html>

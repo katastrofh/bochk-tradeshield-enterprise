@@ -1,0 +1,11 @@
+Invoice No: INV-CN-001
+Purchase Order No: PO-CN-8801
+Invoice Date: 2026-07-10
+Supplier: Shenzhen Electronics Ltd.
+Buyer: Guangzhou Smart Factory Co.
+Supplier Bank Account: CN-SZ-8831-002
+Shipment Status: Verified
+Payment Terms: 30 days
+Total Amount: HK$180,000
+
+Goods: industrial sensor modules.
