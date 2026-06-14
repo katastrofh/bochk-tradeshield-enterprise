@@ -32,11 +32,12 @@ from tradeshield.services.pricing import indicative_pricing
 from tradeshield.services.scenario import stress_scenarios
 from tradeshield.services.stress import portfolio_stress
 from tradeshield.services.workflow import next_action, workflow_readiness, workflow_state
+from tradeshield.services.llm_case import make_case_pack, llm_case_chat, llm_credit_memo
 from tradeshield.services.ai_layer import document_ai_extract, risk_ai_explanation, genai_credit_memo, ask_case_ai
 from tradeshield.storage import save_upload
 
 settings = get_settings()
-app = FastAPI(title=settings.app_name, version="6.0.0-enterprise-control-tower")
+app = FastAPI(title=settings.app_name, version="8.0.0-real-llm-copilot")
 
 app.add_middleware(
     CORSMiddleware,
@@ -95,7 +96,7 @@ def health(db: Session = Depends(get_db)):
         return {
             "status": "ok",
             "database": "connected",
-            "version": "6.0.0-enterprise-control-tower",
+            "version": "8.0.0-real-llm-copilot",
             "counts": {"users": user_count, "cases": case_count, "models": model_count, "audit_events": audit_count},
             "audit_chain": chain,
         }
@@ -496,3 +497,47 @@ def ai_ask_case(case_id: int, question: str = Form(...), db: Session = Depends(g
     doc_ai = document_ai_extract(case, docs)
     risk_ai = risk_ai_explanation(case, risk, docs, graph)
     return ask_case_ai(case, risk, doc_ai, risk_ai, question)
+
+
+@app.post("/llm/cases/{case_id}/chat")
+def llm_case_chat_endpoint(
+    case_id: int,
+    question: str = Form(...),
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles("OFFICER", "RISK_MANAGER", "ADMIN")),
+):
+    case = _case_or_404(db, case_id)
+    risk = _latest_risk(db, case_id)
+    docs = _documents(db, case_id)
+    audits = _audits(db, case_id)
+    pack = make_case_pack(db, case, risk, docs, audits)
+    record_event(
+        db,
+        actor=user,
+        case_id=case.id,
+        event_type="LLM_CASE_CHAT",
+        event_summary=f"Real LLM chat requested for {case.case_ref}.",
+        payload={"question": question},
+    )
+    return llm_case_chat(pack, question)
+
+
+@app.get("/llm/cases/{case_id}/credit-memo")
+def llm_credit_memo_endpoint(
+    case_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles("OFFICER", "RISK_MANAGER", "ADMIN")),
+):
+    case = _case_or_404(db, case_id)
+    risk = _latest_risk(db, case_id)
+    docs = _documents(db, case_id)
+    audits = _audits(db, case_id)
+    pack = make_case_pack(db, case, risk, docs, audits)
+    record_event(
+        db,
+        actor=user,
+        case_id=case.id,
+        event_type="LLM_CREDIT_MEMO",
+        event_summary=f"Real LLM credit memo requested for {case.case_ref}.",
+    )
+    return llm_credit_memo(pack)
