@@ -5,6 +5,7 @@ TS.pages = [
   ["cases", "Case Queue"],
   ["portfolio", "Portfolio Stress"],
   ["passport", "Risk Passport"],
+  ["ai", "AI Workbench"],
   ["copilot", "Copilot Brief"],
   ["decision", "Decision & Settlement"],
   ["fraud", "Fraud Network"],

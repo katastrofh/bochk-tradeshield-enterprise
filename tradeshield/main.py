@@ -32,6 +32,7 @@ from tradeshield.services.pricing import indicative_pricing
 from tradeshield.services.scenario import stress_scenarios
 from tradeshield.services.stress import portfolio_stress
 from tradeshield.services.workflow import next_action, workflow_readiness, workflow_state
+from tradeshield.services.ai_layer import document_ai_extract, risk_ai_explanation, genai_credit_memo, ask_case_ai
 from tradeshield.storage import save_upload
 
 settings = get_settings()
@@ -458,3 +459,40 @@ def report(case_id: int, db: Session = Depends(get_db), user: User = Depends(get
     pdf = risk_passport_pdf(case, risk, audits)
     record_event(db, actor=user, case_id=case_id, event_type="REPORT_EXPORTED", event_summary="Risk Passport PDF exported.")
     return Response(content=pdf, media_type="application/pdf", headers={"Content-Disposition": f"attachment; filename={case.case_ref}_risk_passport.pdf"})
+
+
+@app.get("/ai/cases/{case_id}/document-intelligence")
+def ai_document_intelligence(case_id: int, db: Session = Depends(get_db), user: User = Depends(require_roles("OFFICER", "RISK_MANAGER", "ADMIN"))):
+    case = _case_or_404(db, case_id)
+    return document_ai_extract(case, _documents(db, case_id))
+
+
+@app.get("/ai/cases/{case_id}/risk-explanation")
+def ai_risk_view(case_id: int, db: Session = Depends(get_db), user: User = Depends(require_roles("OFFICER", "RISK_MANAGER", "ADMIN"))):
+    case = _case_or_404(db, case_id)
+    risk = _latest_risk(db, case_id)
+    docs = _documents(db, case_id)
+    graph = build_fraud_graph(db, case)
+    return risk_ai_explanation(case, risk, docs, graph)
+
+
+@app.get("/ai/cases/{case_id}/genai-memo")
+def ai_genai_memo(case_id: int, db: Session = Depends(get_db), user: User = Depends(require_roles("OFFICER", "RISK_MANAGER", "ADMIN"))):
+    case = _case_or_404(db, case_id)
+    risk = _latest_risk(db, case_id)
+    docs = _documents(db, case_id)
+    graph = build_fraud_graph(db, case)
+    doc_ai = document_ai_extract(case, docs)
+    risk_ai = risk_ai_explanation(case, risk, docs, graph)
+    return genai_credit_memo(case, risk, doc_ai, risk_ai)
+
+
+@app.post("/ai/cases/{case_id}/ask")
+def ai_ask_case(case_id: int, question: str = Form(...), db: Session = Depends(get_db), user: User = Depends(require_roles("OFFICER", "RISK_MANAGER", "ADMIN"))):
+    case = _case_or_404(db, case_id)
+    risk = _latest_risk(db, case_id)
+    docs = _documents(db, case_id)
+    graph = build_fraud_graph(db, case)
+    doc_ai = document_ai_extract(case, docs)
+    risk_ai = risk_ai_explanation(case, risk, docs, graph)
+    return ask_case_ai(case, risk, doc_ai, risk_ai, question)
