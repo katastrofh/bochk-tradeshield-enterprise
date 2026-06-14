@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>BOC TradeShield Enterprise</title>
+  <link rel="stylesheet" href="/static/style.css?v=20260614-loginfix"/>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">TS</div>
+        <div>
+          <h1>TradeShield</h1>
+          <p>Bank Workflow Edition</p>
+        </div>
+      </div>
+      <nav>
+        <a href="#guide" class="nav-link active">1. Demo Guide</a>
+        <a href="#queue" class="nav-link">2. Case Queue</a>
+        <a href="#passport" class="nav-link">3. Risk Passport</a>
+        <a href="#decision" class="nav-link">4. Decision & Settlement</a>
+        <a href="#fraud" class="nav-link">5. Fraud Network</a>
+        <a href="#audit" class="nav-link">6. Audit & Governance</a>
+      </nav>
+      <div class="login-card">
+        <h3>Login</h3>
+        <input id="email" value="officer@tradeshield.ai"/>
+        <input id="password" value="demo12345" type="password"/>
+        <button id="loginBtn" type="button" onclick="login()">Login</button>
+        <button class="secondary" type="button" onclick="demoOfficerLogin()">Use officer demo account</button>
+        <div id="loginStatus" class="small"></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">BOCHK Challenge 2026 • Production-oriented fintech system</p>
+          <h2>Cross-border SME trade-finance operating layer</h2>
+          <p>Every financing application becomes a <b>Risk Passport</b>: evidence, risk, fraud graph, human decision, settlement controls, ESG evidence, and tamper-evident audit proof in one controlled workflow.</p>
+        </div>
+        <div class="hero-card">
+          <span class="label">Current User</span>
+          <strong id="currentUser">Not logged in</strong>
+          <span id="currentRole" class="pill">No role</span>
+        </div>
+      </section>
+
+      <section id="guide" class="panel">
+        <div class="section-head">
+          <div>
+            <h2>1. What this system is</h2>
+            <p>Do not read this as an invoice checker. It is a bank workflow layer for controlled SME trade-finance decisions.</p>
+          </div>
+        </div>
+        <div class="workflow">
+          <div class="step"><b>Case Intake</b><span>SME submits trade financing application.</span></div>
+          <div class="step"><b>Document Evidence</b><span>Invoices and trade docs are parsed and hashed.</span></div>
+          <div class="step"><b>Risk Passport</b><span>Explainable risk score, recommendation, conditions.</span></div>
+          <div class="step"><b>Human Decision</b><span>Officer / risk manager decides; AI does not approve autonomously.</span></div>
+          <div class="step"><b>Settlement</b><span>Payment release only after verification conditions.</span></div>
+          <div class="step"><b>Audit</b><span>Every action is linked into a hash-chain.</span></div>
+        </div>
+      </section>
+
+      <section class="kpis">
+        <div class="kpi"><span>Total cases</span><strong id="kpiCases">—</strong></div>
+        <div class="kpi"><span>High/medium risk</span><strong id="kpiRisk">—</strong></div>
+        <div class="kpi"><span>Pending decisions</span><strong id="kpiPending">—</strong></div>
+        <div class="kpi"><span>Audit chain</span><strong id="kpiAudit">—</strong></div>
+      </section>
+
+      <section id="queue" class="panel">
+        <div class="section-head">
+          <div>
+            <h2>2. Case Queue</h2>
+            <p>Select a case. The medium and high-risk seeded cases are designed for the live pitch.</p>
+          </div>
+          <button onclick="loadCases()">Refresh Cases</button>
+        </div>
+        <div id="caseTable" class="table"></div>
+      </section>
+
+      <section id="passport" class="panel">
+        <div class="section-head">
+          <div>
+            <h2>3. Risk Passport</h2>
+            <p>The central product object: a single bank-readable view of evidence, risk, recommended action, and required controls.</p>
+          </div>
+          <button onclick="scoreSelected()">Generate / Refresh Risk Passport</button>
+        </div>
+        <div id="passportView" class="passport-empty">Select a case from the queue.</div>
+      </section>
+
+      <section id="decision" class="panel">
+        <div class="section-head">
+          <div>
+            <h2>4. Decision & Conditional Settlement</h2>
+            <p>Controls prevent approval before scoring, prevent over-approval, and require verification before payment release.</p>
+          </div>
+        </div>
+        <div class="decision-grid">
+          <div class="card">
+            <h3>Human decision</h3>
+            <select id="decisionType">
+              <option value="PARTIAL_APPROVE">Partial approve</option>
+              <option value="APPROVE">Approve</option>
+              <option value="ESCALATE">Escalate</option>
+              <option value="REJECT">Reject</option>
+            </select>
+            <input id="approvedAmount" placeholder="Approved amount HKD" value="210000"/>
+            <textarea id="decisionReason">Conditional approval: verify supplier account and shipment evidence before settlement release.</textarea>
+            <button onclick="submitDecision()">Record Decision</button>
+          </div>
+          <div class="card">
+            <h3>Settlement controls</h3>
+            <button onclick="verifySupplier()">Verify supplier account</button>
+            <button onclick="verifyShipment()">Verify shipment evidence</button>
+            <button onclick="releaseSettlement()">Release conditional settlement</button>
+            <p class="small">Settlement release requires an approved/partially approved case plus supplier and shipment verification.</p>
+          </div>
+          <div class="card">
+            <h3>ESG verification</h3>
+            <button onclick="verifyESG()">Record ESG certificate</button>
+            <p class="small">ESG is secondary: it improves green-trade eligibility, but does not replace credit/risk checks.</p>
+          </div>
+        </div>
+        <div id="decisionResult" class="notice"></div>
+      </section>
+
+      <section id="fraud" class="panel">
+        <div class="section-head">
+          <div>
+            <h2>5. Fraud Network</h2>
+            <p>Shows why a case may be suspicious: shared accounts, changed beneficiaries, linked suppliers, and corridor risk.</p>
+          </div>
+          <button onclick="loadFraud()">Load Fraud Graph</button>
+        </div>
+        <div id="fraudNarrative" class="notice"></div>
+        <div id="graph" class="graph"></div>
+      </section>
+
+      <section id="audit" class="panel">
+        <div class="section-head">
+          <div>
+            <h2>6. Audit & Governance</h2>
+            <p>Decision traceability for internal audit, model governance, and dispute review.</p>
+          </div>
+          <button onclick="loadAudit()">Refresh Audit</button>
+        </div>
+        <div class="decision-grid">
+          <div class="card">
+            <h3>Model Registry</h3>
+            <div id="modelRegistry"></div>
+          </div>
+          <div class="card">
+            <h3>Risk Passport PDF</h3>
+            <button onclick="downloadReport()">Download selected case report</button>
+          </div>
+        </div>
+        <div id="auditView" class="audit-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js?v=20260614-loginfix"></script>
+</body>
+</html>

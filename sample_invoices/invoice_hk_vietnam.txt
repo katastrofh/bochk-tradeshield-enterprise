@@ -1,0 +1,11 @@
+Invoice No: INV-VN-014
+Purchase Order No: PO-VN-7721
+Invoice Date: 2026-07-15
+Supplier: Shenzhen Electronics Ltd.
+Buyer: Vietnam Retail Group
+Supplier Bank Account: CN-SZ-9910-NEW
+Shipment Status: Pending
+Payment Terms: 45 days
+Total Amount: HK$300,000
+
+Goods: consumer electronics components.

@@ -1,0 +1,11 @@
+Invoice No: INV-ID-021
+Purchase Order No: PO-ID-4410
+Invoice Date: 2026-07-20
+Supplier: New Asia Components
+Buyer: Jakarta Wholesale Hub
+Supplier Bank Account: HK-SHARED-4455
+Shipment Status: Pending
+Payment Terms: 90 days
+Total Amount: HK$920,000
+
+Goods: mixed electronic assemblies.
